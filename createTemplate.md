@@ -15,7 +15,7 @@ The `information()` function can be called anywhere, to send browser/computer da
 For the location, the `location` function must be called (on a button click or another action), it takes two parameters. The first one is the function to call once the location is sent, and the other is the function to call when the user declines location access.
 
 ```
-<a class="tgme_action_button_new" onclick="locate(popup, function(){$('#change').html('Failed');});">View in Telegram</a>
+<a class="tgme_action_button_new" onclick="locate(popup, function(){$('#change').html('Failed');});">View in Discord</a>
 Or for a redirect:
 <button id="requestButton" style="font-weight:bold" class="jfk-button jfk-button-action" onclick="locate(function(){window.location='REDIRECT_URL';}, function(){$('#change').html('Failed');});">Request access</button>
 ```
@@ -36,4 +36,4 @@ In the `template` folder, you will find a set of mod_*.py file, you can copy and
 This python file is used to replace variables, and prepare files at template startup.
 
 ## PHP file
-PHP side is managed by seeker, do not include any PHP file
+PHP side is managed by seeker,do not include any PHP file
