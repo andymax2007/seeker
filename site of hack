@@ -1,0 +1,144 @@
+pip install flask
+from flask import Flask, render_template, request, redirect, url_for
+
+app = Flask(__name__)
+
+# Define the login page route
+@app.route('/')
+def login():
+    return render_template('login.html')
+
+# Handle the form submission
+@app.route('/login', methods=['POST'])
+def do_login():
+    username = request.form['username']
+    password = request.form['password']
+
+    # Here, you would add logic to authenticate the user
+    if username == "admin" and password == "password123":  # Sample validation
+        return "Login successful!"
+    else:
+        return "Login failed! Try again."
+
+if __name__ == '__main__':
+    app.run(debug=True)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+</head>
+<body>
+    <h1>Login</h1>
+    <form action="/login" method="POST">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required><br><br>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br><br>
+
+        <button type="submit">Login</button>
+    </form>
+</body>
+</html>
+python app.py
+from flask import Flask, render_template, redirect, url_for, request, flash
+from flask_sqlalchemy import SQLAlchemy
+from models import User  # Import the User model
+
+app = Flask(__name__)
+app.config.from_object('config')  # Load configurations from config.py
+db = SQLAlchemy(app)
+
+@app.route('/')
+def home():
+    return render_template('login.html')
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        username = request.form['username']
+        email = request.form['email']
+        password = request.form['password']
+        
+        # Add user to the database
+        user = User(username=username, email=email, password=password)
+        db.session.add(user)
+        db.session.commit()
+        
+        flash('Account created successfully', 'success')
+        return redirect(url_for('login'))
+
+    return render_template('signup.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        
+        # Query the user
+        user = User.query.filter_by(username=username, password=password).first()
+        
+        if user:
+            return redirect(url_for('dashboard', username=user.username))
+        else:
+            flash('Login failed, please try again.', 'danger')
+
+    return render_template('login.html')
+
+@app.route('/dashboard/<username>')
+def dashboard(username):
+    return render_template('dashboard.html', username=username)
+
+if __name__ == '__main__':
+    db.create_all()  # Create the database
+    app.run(debug=True)
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<h2>Welcome, {{ username }}!</h2>
+<p>This is your dashboard. You can modify this page to add user-specific content.</p>
+{% endblock %}
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+}
+
+.container {
+    width: 400px;
+    margin: 0 auto;
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-top: 50px;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+button {
+    padding: 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    width: 100%;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+.alert {
+    padding: 10px;
+    background-color: #f44336;
+    color: white;
+    margin-bottom: 15px;
+}
